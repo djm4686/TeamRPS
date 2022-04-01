@@ -5,7 +5,7 @@ An ethereum smart contract for a blockchain-based gambling game built with solid
 
 For those of you that live under a rock, a normal rock-paper-scissors game is played between two players. The game begins when both players simultaneously hold out their hands and say the words "rock, paper, scissors, shoot!" When the word "shoot" is said, each player forms their hand into one of three gestures, each one signifying either rock, paper, or scissors respectively. The winner of the game is the person who gestured with the "better" of the two displayed gestures. Paper beats rock, rock beats scissors, and scissors beats paper. If both players display the same gesture, the game is a tie.
 
-Team RPS takes this classic game and puts it on the blockchain, and instead of there being only two players, there are two teams made up of a potentially limitless amount of players.
+Team RPS takes this classic game and puts it on the blockchain, and instead of there being only two players, there are two teams made up of a potentially limitless amount of players. Players vote on what each team should gesture. Once a certain number of blocks are mined, the winning team is finalized.
 
 ## How to play the game:
 
@@ -16,7 +16,7 @@ The game has two states: active and inactive.
     Inactive: The current block is greater than the start block plus the number of blocks specified during creation
       e.g. a game started on block 20 with a game length of 10 blocks would be inactive on any blocks other than 20-30.
 
-While the game is active players may vote() for a team and either rock, paper, or scissors. Players can vote() multiple times, each time paying the betAmount specified in the contract. Players may vote for any combination of teams and gestures. This means that you can vote for both the red team and the blue team at the same time. There are three reasons you may want to vote for both teams: to recover obvious losses, to hedge your bet, or to sabotage the team you don't want to win. Votes are publicly viewable, but are immutable and cannot be changed.
+While the game is active players may vote() for a team and either rock, paper, or scissors. Players can vote() multiple times, each time paying the betAmount specified in the contract. Players may vote for any combination of teams and gestures. This means that you can vote() for both the red team and the blue team at the same time. There are three reasons you may want to vote() for both teams: to recover obvious losses, to hedge your bet, or to sabotage the team you don't want to win. Votes are publicly viewable, but are immutable and cannot be changed.
 
 Note: You may not vote more than 100 times per game. This is to prevent out-of-gas exceptions when calling withdrawWinnings()
 
