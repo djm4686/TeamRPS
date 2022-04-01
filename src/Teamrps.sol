@@ -69,7 +69,7 @@ contract RPS {
         uint lastDepositBlock;
     }
 
-    mapping(address => playerBalance) playerBalances;
+    mapping(address => playerBalance) public playerBalances;
     mapping(address => mapping(uint => Bet[])) public playerBets;
     Game[] public gameHistory;
     Game public game;
@@ -284,37 +284,6 @@ contract RPS {
             payoutAmount = g.pot / g.bluePlayerCount;
         }
         return payoutAmount;
-    }
-
-    function deposit() public payable {
-        playerBalances[msg.sender].lastDepositBlock = block.number;
-        playerBalances[msg.sender].balance += msg.value;
-    }
-
-    function withdraw() public {
-        require(playerBalances[msg.sender].lastDepositBlock + 10 < block.number);
-        playerBalances[msg.sender].balance = 0;
-        payable(msg.sender).transfer(playerBalances[msg.sender].balance);
-    }
-
-    function transferWinnings(uint[] calldata gameIds) public {
-        require(gameIds.length < 100);
-        uint payout = 0;
-        for(uint j=0; j < gameIds.length; j++){
-            require(gameIds[j] >= 0 && gameIds[j] < currentGameId, string(abi.encodePacked("gameid out of range: ", uint2str(currentGameId))));
-            Bet[] memory bets = playerBets[msg.sender][gameIds[j]];
-            Winner winner = determineWinner(gameIds[j]);
-            if(bets.length > 0){
-                for(uint k = 0; k < bets.length; k++){
-                    if(isWinner(bets[k].team, winner)){
-                        payout += getPayout(gameIds[j]);
-                    }
-                }
-            }
-            delete playerBets[msg.sender][gameIds[j]];
-        }
-        playerBalances[msg.sender].balance += payout;
-        playerBalances[msg.sender].lastDepositBlock = block.number;
     }
 
     function withdrawWinnings(uint[] calldata gameIds) public {
