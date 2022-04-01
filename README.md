@@ -21,6 +21,8 @@ The game has two states: active and inactive.
 
 While the game is active players may vote() for a team and either rock, paper, or scissors. Players can vote() multiple times, each time paying the betAmount specified in the contract. Players may vote for any combination of teams and gestures. This means that you can vote for both the red team and the blue team at the same time. There are three reasons you may want to vote for both teams: to recover obvious losses, to hedge your bet, or to sabotage the team you don't want to win. Votes are publicly viewable, but are immutable and cannot be changed.
 
+Note: You may not vote more than 100 times per game. This is to prevent out-of-gas exceptions when calling withdrawWinnings()
+
 A winner is determined once the game becomes inactive. The votes for each gesture for each team are summed, and the winning vote is that team's gesture. The team with the "better" gesture is the winner.
 
 Example:
@@ -98,6 +100,8 @@ withdrawWinnings() takes in a list of gameIds, limited to a total of 100 Ids to 
 The calculations to determine who won a game and who gets the payout is actually done every time withdrawWinnings() is called.
 
 Note: Due to math in solidity not having floating points, the above calculation is rounded down. So you may receive 1 WEI less than you should have. 1 WEI is 1 attoether, or 0.000000000000000001 ETH. At current prices that's worth .0000000000000032052 USD so nobody should really be complaining too much.
+
+Note: withdrawWinnings() will throw an error if you try to give it a gameId that hasnt happened, or the current gameId.
 
 ## Testing
 

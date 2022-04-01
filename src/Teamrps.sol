@@ -135,6 +135,8 @@ contract RPS {
              uint2str(block.number), " --- Starting block: ",
              uint2str(game.startBlock), " --- Game Length: ",
              uint2str(blockLength))));
+        require(playerBets[msg.sender][currentGameId].length < 100,
+           "You have made too many votes this game.")
         game.pot += betAmount;
         if(team == Team.RED){
             game.redPlayerCount += 1;
