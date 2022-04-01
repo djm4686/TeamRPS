@@ -280,8 +280,7 @@ contract RPS {
                 return true;
             }
         }
-        // Bad state. Shouldnt ever get here, but if it does its good to revert.
-        revert();
+        return false;
     }
 
     // This function must be called when the game is over to start a new game.
