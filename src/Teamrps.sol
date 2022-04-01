@@ -123,10 +123,18 @@ contract RPS {
         return string(bstr);
     }
     function vote(Team team, Vote v) public payable {
-        require(msg.value == betAmount, "wrong bet amount");
-        require(team == Team.RED || team == Team.BLUE, "bad team assignment");
-        require(v == Vote.ROCK || v == Vote.PAPER || v == Vote.SCISSORS, "bad vote");
-        require(block.number <= game.startBlock + blockLength, string(abi.encodePacked("Block too late: ", uint2str(block.number), " : ", uint2str(game.startBlock), uint2str(blockLength))));
+        require(msg.value == betAmount, string(abi.encodePacked("Wrong bet amount. The bet amount must be: ",
+         uint2str(betAmount), " WEI. You provided: ",
+          uint2str(msg.value), " WEI.")));
+        require(team == Team.RED || team == Team.BLUE,
+           "Bad team assignment. Please choose either the Red or Blue team.");
+        require(v == Vote.ROCK || v == Vote.PAPER || v == Vote.SCISSORS,
+           "Bad vote. Please vote for Rock, Paper, or Scissors.");
+        require(block.number <= game.startBlock + blockLength,
+           string(abi.encodePacked("Game inactive. Current block: ",
+             uint2str(block.number), " --- Starting block: ",
+             uint2str(game.startBlock), " --- Game Length: ",
+             uint2str(blockLength))));
         game.pot += betAmount;
         if(team == Team.RED){
             game.redPlayerCount += 1;
@@ -290,7 +298,9 @@ contract RPS {
         require(gameIds.length < 100);
         uint payout = 0;
         for(uint j=0; j < gameIds.length; j++){
-            require(gameIds[j] >= 0 && gameIds[j] < currentGameId, string(abi.encodePacked("gameid out of range: ", uint2str(currentGameId))));
+            require(gameIds[j] >= 0 && gameIds[j] < currentGameId,
+               string(abi.encodePacked("gameId provided is out of range: ",
+                uint2str(currentGameId), " -- Please provide a valid gameId.")));
             Bet[] memory bets = playerBets[msg.sender][gameIds[j]];
             Winner winner = determineWinner(gameIds[j]);
             if(bets.length > 0){
