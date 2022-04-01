@@ -51,7 +51,7 @@ contract RPS {
         Vote vote;
     }
 
-    // The strcuture for the game state.
+    // The structure for the game state.
     struct Game {
         uint pot;
         uint redPlayerCount;
@@ -67,7 +67,7 @@ contract RPS {
         Vote lastBlueVote;
     }
 
-    // This is a mapping of each player to each game state to each bet they made in that game.
+    // This is a mapping of each player to each game id to each bet they made in that game.
     mapping(address => mapping(uint => Bet[])) public playerBets;
     // This is a list of the state of all previous games indexed by their gameId
     Game[] public gameHistory;
@@ -149,6 +149,10 @@ contract RPS {
         require(playerBets[msg.sender][currentGameId].length < 100,
            "You have made too many votes this game.");
         game.pot += betAmount;
+        addBet(team, v);
+    }
+
+    function addBet(Team team, Vote v) internal {
         if(team == Team.RED){
             game.redPlayerCount += 1;
             if(v == Vote.ROCK){
@@ -162,6 +166,10 @@ contract RPS {
             else if(v == Vote.SCISSORS){
                 game.redScissorsVotes += 1;
                 game.lastRedVote = Vote.SCISSORS;
+            }
+            else{
+              // Bad state
+              revert();
             }
         }
         else if(team == Team.BLUE){
@@ -178,6 +186,10 @@ contract RPS {
                 game.blueScissorsVotes += 1;
                 game.lastBlueVote = Vote.SCISSORS;
             }
+            else{
+              // Bad state
+              revert();
+            }
         }
         else{
           // Bad state. Shouldnt get here but its good to revert if it does.
@@ -188,6 +200,28 @@ contract RPS {
             vote: v,
             team: team
         }));
+    }
+
+    function voteMultiple(Bet[] calldata bets) public payable {
+      require(bets.length > 0, "You must provide at least one bet");
+      require(msg.value == bets.length * betAmount, "You must provide exactly enough eth to cover all bets.");
+      require(playerBets[msg.sender][currentGameId].length + bets.length < 100,
+         "Too many bets. You can have a maximum of 100 bets per game.");
+      require(block.number <= game.startBlock + blockLength,
+          string(abi.encodePacked("Game inactive. Current block: ",
+            uint2str(block.number), " --- Starting block: ",
+            uint2str(game.startBlock), " --- Game Length: ",
+            uint2str(blockLength))));
+      game.pot += msg.value;
+      for(uint i=0; i < bets.length; i++){
+          Bet memory currentBet = bets[i];
+          require(currentBet.team == Team.RED || currentBet.team == Team.BLUE);
+          require(currentBet.vote == Vote.ROCK ||
+                  currentBet.vote == Vote.PAPER ||
+                  currentBet.vote == Vote.SCISSORS);
+          addBet(currentBet.team, currentBet.vote);
+
+      }
     }
 
     // An internal function. Based on the gameid, it returns a Winner enum value showing the result of the game.
@@ -204,11 +238,11 @@ contract RPS {
             redWinner = Vote.PAPER;
             redWinnerCount = g.redPaperVotes;
         }
-        else if(g.redRockVotes > redWinnerCount || (g.redRockVotes >= redWinnerCount && g.lastRedVote == Vote.ROCK)){
+        if(g.redRockVotes > redWinnerCount || (g.redRockVotes >= redWinnerCount && g.lastRedVote == Vote.ROCK)){
             redWinner = Vote.ROCK;
             redWinnerCount = g.redRockVotes;
         }
-        else if(g.redScissorsVotes > redWinnerCount || (g.redScissorsVotes >= redWinnerCount && g.lastRedVote == Vote.SCISSORS)){
+        if(g.redScissorsVotes > redWinnerCount || (g.redScissorsVotes >= redWinnerCount && g.lastRedVote == Vote.SCISSORS)){
             redWinner = Vote.SCISSORS;
             redWinnerCount = g.redScissorsVotes;
         }
@@ -216,11 +250,11 @@ contract RPS {
             blueWinner = Vote.PAPER;
             blueWinnerCount = g.bluePaperVotes;
         }
-        else if(g.blueRockVotes > blueWinnerCount || (g.blueRockVotes >= blueWinnerCount && g.lastBlueVote == Vote.ROCK)){
+        if(g.blueRockVotes > blueWinnerCount || (g.blueRockVotes >= blueWinnerCount && g.lastBlueVote == Vote.ROCK)){
             blueWinner = Vote.ROCK;
             blueWinnerCount = g.blueRockVotes;
         }
-        else if(g.blueScissorsVotes > blueWinnerCount || (g.blueScissorsVotes >= blueWinnerCount && g.lastBlueVote == Vote.SCISSORS)){
+        if(g.blueScissorsVotes > blueWinnerCount || (g.blueScissorsVotes >= blueWinnerCount && g.lastBlueVote == Vote.SCISSORS)){
             blueWinner = Vote.SCISSORS;
             blueWinnerCount = g.blueScissorsVotes;
         }
@@ -328,8 +362,8 @@ contract RPS {
     }
 
     // This function is called when a player wants to withdraw their winnings.
-    // It takes in a list of gameIds, and loops over ethereum
-    // For each gameId given, it calculates how much the sender is owed Based
+    // It takes in a list of gameIds, and loops over them
+    // For each gameId given, it calculates how much the sender is owed based
     // on the result of that game.
     function withdrawWinnings(uint[] calldata gameIds) public {
         require(gameIds.length < 100);
@@ -357,8 +391,8 @@ contract RPS {
     // This function is so the owner of the contract can withdraw their cut.
     function withdrawOwner() public {
       require(msg.sender == owner);
-      ownerValue = 0;
       payable(msg.sender).transfer(ownerValue);
+      ownerValue = 0;
     }
 
     // This is used for testing
