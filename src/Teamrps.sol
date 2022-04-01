@@ -7,6 +7,7 @@ contract RPS {
     enum Vote { ROCK, PAPER, SCISSORS, NULL }
     enum Winner { REDPAPER, REDROCK, REDSCISSORS, BLUEPAPER, BLUEROCK, BLUESCISSORS, TIE }
 
+    // Used solely for exposing the enums to the test harness
     function getTeamEnum(string calldata req) external pure returns (Team) {
       if(keccak256(abi.encodePacked(req)) == keccak256("RED")){
         return Team.RED;
@@ -20,6 +21,7 @@ contract RPS {
       revert();
     }
 
+    // Used solely for exposing the enums to the test harness
     function getVoteEnum(string calldata req) external pure returns (Vote) {
       if(keccak256(abi.encodePacked(req)) == keccak256("ROCK")){
         return Vote.ROCK;
@@ -36,18 +38,20 @@ contract RPS {
       revert();
     }
 
-    address public owner;
-    uint public ownerCut;
-    uint public ownerValue;
-    uint public currentGameId;
-    uint public betAmount;
-    uint8 public blockLength; //Blocks
+    address public owner; // The owner of the contract
+    uint public ownerCut; // The amount the owner gets per pot
+    uint public ownerValue; // The value the owner can withdraw
+    uint public currentGameId; // The id of the current Game state.
+    uint public betAmount; // The amount needed to pay to vote()
+    uint8 public blockLength; // The number of blocks each game lasts for.
 
+    // The structure stored for each bet.
     struct Bet {
         Team team;
         Vote vote;
     }
 
+    // The strcuture for the game state.
     struct Game {
         uint pot;
         uint redPlayerCount;
@@ -63,10 +67,14 @@ contract RPS {
         Vote lastBlueVote;
     }
 
+    // This is a mapping of each player to each game state to each bet they made in that game.
     mapping(address => mapping(uint => Bet[])) public playerBets;
+    // This is a list of the state of all previous games indexed by their gameId
     Game[] public gameHistory;
+    // The current game state
     Game public game;
 
+    // Called when the contract is published to the blockchain
     constructor(uint bet, uint8 numBlocks, uint cut){
         owner = msg.sender;
         betAmount = bet;
@@ -76,6 +84,7 @@ contract RPS {
         createNewGame(0);
     }
 
+    // An internal function used to create a new game state
     function createNewGame(uint potLeftover) internal {
         game = Game({
             pot: potLeftover,
@@ -93,6 +102,7 @@ contract RPS {
         });
     }
 
+    // A helper function to convert uint types to strings for error messages
     function uint2str(uint _i) internal pure returns (string memory _uintAsString) {
         if (_i == 0) {
             return "0";
@@ -114,6 +124,9 @@ contract RPS {
         }
         return string(bstr);
     }
+
+    // The function to vote for a particular team and gesture.
+    // The amount sent MUST be EQUAL to the betAmount attribute
     function vote(Team team, Vote v) public payable {
         require(msg.value == betAmount, string(abi.encodePacked("Wrong bet amount. The bet amount must be: ",
          uint2str(betAmount), " WEI. You provided: ",
@@ -169,6 +182,7 @@ contract RPS {
         }));
     }
 
+    // An internal function. Based on the gameid, it returns a Winner enum value showing the result of the game.
     function determineWinner(uint gameId) internal view returns (Winner winner){
         require(gameId >= 0 && gameId <= currentGameId);
         Game memory g = gameHistory[gameId];
@@ -237,6 +251,8 @@ contract RPS {
         revert();
     }
 
+    // An internal function.
+    // It returns true if the Team enum given is considered a winner based on the Winner enum given.
     function isWinner(Team t, Winner w) internal pure returns (bool winner) {
         if(w == Winner.TIE){
             return false;
@@ -254,6 +270,9 @@ contract RPS {
         return false;
     }
 
+    // This function must be called when the game is over to start a new game.
+    // It calculates the owner's cut, pushes the current game state to the gameHistory,
+    // And creates a new game state.
     function endGame() public {
         require(game.startBlock + blockLength <= block.number);
         uint cut = calculateCut(game.pot);
@@ -271,10 +290,13 @@ contract RPS {
 
     }
 
+    // The function used to calculate the amount to give to the owner of the contract
     function calculateCut(uint pot) public view returns (uint){
         return pot * ownerCut / 10000;
     }
 
+    // This function calculates the payout that should be given based on the
+    // number of winning players in that game.
     function getPayout(uint gameId) internal view returns (uint payout) {
         require(gameId >= 0 && gameId < currentGameId);
         uint payoutAmount = 0;
@@ -288,6 +310,10 @@ contract RPS {
         return payoutAmount;
     }
 
+    // This function is called when a player wants to withdraw their winnings.
+    // It takes in a list of gameIds, and loops over ethereum
+    // For each gameId given, it calculates how much the sender is owed Based
+    // on the result of that game.
     function withdrawWinnings(uint[] calldata gameIds) public {
         require(gameIds.length < 100);
         uint payout = 0;
@@ -308,11 +334,15 @@ contract RPS {
         }
         payable(msg.sender).transfer(payout);
     }
+
+    // This function is so the owner of the contract can withdraw their cut.
     function withdrawOwner() public {
       require(msg.sender == owner);
       ownerValue = 0;
       payable(msg.sender).transfer(ownerValue);
     }
+
+    // This is used for testing
     receive() external payable {
     }
 
