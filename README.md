@@ -25,14 +25,23 @@ A winner is determined once the game becomes inactive. The votes for each gestur
 Example:
 
 Red Team:
+
   Votes:
+
     Rock: 6
+
     Paper: 12
+
     Scissors: 11
+
 Blue Team:
+
   Votes:
+
     Rock:3
+
     Paper:4
+
     Scissors:11
 
 In the above example the Red team's gesture is determined to be Paper, and the Blue team's gesture is Scissors. Following normal rules of RPS, the Blue team wins.
@@ -69,7 +78,9 @@ deposit(); payable
 
 vote() takes two enums, the team you want to vote for, and the vote itself.
 The enums are defined as:
+
 enum Team { RED, BLUE, NONE }
+
 enum Vote { ROCK, PAPER, SCISSORS, NULL }
 
 Note that Team.NONE and Vote.NULL are for internal data initialization only, and should not be used as parameters. The function call will fail if you send either of those values, losing the eth that you sent in the process.
@@ -81,10 +92,15 @@ voteWithBalance() works the same way as vote(), but it is not payable. Instead, 
 endGame() can only be called when the game is inactive. It pushes the current game onto the gameHistory array, then initializes a new game. If the last game was a tie, the game's initial pot will be the total pot of the last game. The start block is the block in which endGame() is called. All votes for all teams are wiped, and the new game becomes active.
 
 withdrawWinnings() takes in a list of gameIds, limited to a total of 100 Ids to help prevent out-of-gas issues. This loops through the history of all of the games supplied in the parameter, and tallies up the winnings of any game for which you bet on the winning team. It then transfer the entire amount tallied over all games to your wallet. The payout of each game works as follows:
+
   p = total pot in the game minus any owner cuts
+
   w = total amount of bets for the winning team
+
   b = total amount of bets YOU made for the winning team
+
   t = total payout
+
   t = (p / w) *
 
 withdrawBalance() pays out the entire balance you have in the playerBalances attribute based on your wallet address.
