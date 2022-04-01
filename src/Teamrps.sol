@@ -3,9 +3,38 @@ pragma solidity >= 0.8.6;
 
 contract RPS {
 
-    enum Team { RED, BLUE }
+    enum Team { RED, BLUE, NONE }
     enum Vote { ROCK, PAPER, SCISSORS, NULL }
     enum Winner { REDPAPER, REDROCK, REDSCISSORS, BLUEPAPER, BLUEROCK, BLUESCISSORS, TIE }
+
+    function getTeamEnum(string calldata req) external pure returns (Team) {
+      if(keccak256(abi.encodePacked(req)) == keccak256("RED")){
+        return Team.RED;
+      }
+      if(keccak256(abi.encodePacked(req)) == keccak256("BLUE")){
+        return Team.BLUE;
+      }
+      if(keccak256(abi.encodePacked(req)) == keccak256("NONE")){
+        return Team.NONE;
+      }
+      revert();
+    }
+    function getVoteEnum(string calldata req) external pure returns (Vote) {
+      if(keccak256(abi.encodePacked(req)) == keccak256("ROCK")){
+        return Vote.ROCK;
+      }
+      if(keccak256(abi.encodePacked(req)) == keccak256("PAPER")){
+        return Vote.PAPER;
+      }
+      if(keccak256(abi.encodePacked(req)) == keccak256("SCISSORS")){
+        return Vote.SCISSORS;
+      }
+      if(keccak256(abi.encodePacked(req)) == keccak256("NULL")){
+        return Vote.NULL;
+      }
+      revert();
+    }
+
 
     address public owner;
     uint public ownerCut;
@@ -123,6 +152,9 @@ contract RPS {
                 game.lastBlueVote = Vote.SCISSORS;
             }
         }
+        else{
+          revert();
+        }
         playerBets[msg.sender][currentGameId].push(Bet({
             vote: v,
             team: team
@@ -143,7 +175,7 @@ contract RPS {
         }
         else if(g.redRockVotes > redWinnerCount || (g.redRockVotes >= redWinnerCount && g.lastRedVote == Vote.ROCK)){
             redWinner = Vote.ROCK;
-            redWinnerCount = g.redPaperVotes;
+            redWinnerCount = g.redRockVotes;
         }
         else if(g.redScissorsVotes > redWinnerCount || (g.redScissorsVotes >= redWinnerCount && g.lastRedVote == Vote.SCISSORS)){
             redWinner = Vote.SCISSORS;
@@ -194,6 +226,7 @@ contract RPS {
                 return Winner.BLUESCISSORS;
             }
         }
+        revert();
     }
 
     function isWinner(Team t, Winner w) internal pure returns (bool winner) {
@@ -215,7 +248,7 @@ contract RPS {
 
     function endGame() public {
         require(game.startBlock + blockLength <= block.number);
-        uint cut = game.pot * ownerCut / 100;
+        uint cut = calculateCut(game.pot);
         game.pot -= cut;
         ownerValue += cut;
         gameHistory.push(game);
@@ -228,6 +261,10 @@ contract RPS {
         }
         currentGameId += 1;
 
+    }
+
+    function calculateCut(uint pot) public view returns (uint){
+        return pot * ownerCut / 100;
     }
 
     function getPayout(uint gameId) internal view returns (uint payout) {
@@ -254,14 +291,15 @@ contract RPS {
                 for(uint k = 0; k < bets.length; k++){
                     if(isWinner(bets[k].team, winner)){
                         payout += getPayout(gameIds[j]);
-                        break;
                     }
                 }
             }
             delete playerBets[msg.sender][gameIds[j]];
         }
+        //require(true == false, string(abi.encodePacked("payout: ", uint2str(payout))));
         payable(msg.sender).transfer(payout);
     }
-
+    receive() external payable {
+    }
 
 }
