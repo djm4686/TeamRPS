@@ -81,7 +81,7 @@ The value of eth that should be sent along with your vote() is defined by the pu
 
 endGame() can only be called when the game is inactive. It pushes the current game onto the gameHistory array, then initializes a new game. If the last game was a tie, the game's initial pot will be the total pot of the last game. The start block is the block in which endGame() is called. All votes for all teams are wiped, and the new game becomes active.
 
-### withdrawWinnings();
+### withdrawWinnings(uint[] gameIds);
 
 withdrawWinnings() takes in a list of gameIds, limited to a total of 100 Ids to help prevent out-of-gas issues. This loops through the history of all of the games supplied in the parameter, and tallies up the winnings of any game for which you bet on the winning team. It then transfer the entire amount tallied over all games to your wallet. The payout of each game works as follows:
 
