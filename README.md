@@ -19,7 +19,7 @@ The game has two states: active and inactive.
     Inactive: The current block is greater than the start block plus the number of blocks specified during creation
       e.g. a game started on block 20 with a game length of 10 blocks would be inactive on any blocks other than 20-30.
 
-While the game is active players may vote() for a team and either rock, paper, or scissors. Players can vote() multiple times, each time paying the betAmount specified in the contract. Players may vote for any combination of teams and gestures. Votes are publicly viewable, but are immutable and cannot be changed.
+While the game is active players may vote() for a team and either rock, paper, or scissors. Players can vote() multiple times, each time paying the betAmount specified in the contract. Players may vote for any combination of teams and gestures. This means that you can vote for both the red team and the blue team at the same time. There are three reasons you may want to vote for both teams: to recover obvious losses, to hedge your bet, or to sabotage the team you don't want to win. Votes are publicly viewable, but are immutable and cannot be changed.
 
 A winner is determined once the game becomes inactive. The votes for each gesture for each team are summed, and the winning vote is that team's gesture. The team with the "better" gesture is the winner.
 
@@ -90,3 +90,5 @@ withdrawWinnings() takes in a list of gameIds, limited to a total of 100 Ids to 
   t = total payout
 
   t = (p / w) *
+
+The calculations to determine who won a game and who gets the payout is actually done every time withdrawWinnings() is called.
