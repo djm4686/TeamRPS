@@ -49,7 +49,7 @@ Lets assume that the betAmount for the above game was 1 ETH. Lets sum the total 
 
 Each vote MUST have paid EXACTLY the betAmount to have their vote considered, so the total pot was 47 ETH. The winners were the blue team, which had 18 votes. Splitting 47 ETH evenly would pay out over 2.75 ETH to each player. In reality, the payout might be slightly less, as the owner of the contract may take a small cut from the overall pot.
 
-To be paid out, the player calls the withdrawWinnings() function, passing in all of the gameIds of the games they wish to withdrawWinnings from. The first gameId is 0, and 1 is added each time endGame() is called. Therefore, looping through the range of numbers between (0, currentGameId) will yield every game. This list is public, so you can see which gameIds you are owed money for without sending a transaction. The withdraw function is limited to 100 gameIds, to prevent an out-of-gas situation.
+To be paid out, the player calls the withdrawWinnings() function, passing in all of the gameIds of the games they wish to withdrawWinnings from. When the contract is created, the first game played has a gameId of 0. Each time endGame() is called, 1 is added to the gameId. Therefore, looping through the range of numbers between (0, currentGameId) will yield every game. This list is public, so you can see which gameIds you are owed money for without sending a transaction. The withdraw function is limited to 100 gameIds, to prevent an out-of-gas situation.
 
 Note: Before calling withdrawWinnings() with a particular gameId, that game must have been ended with endGame().
 
@@ -66,6 +66,19 @@ There are 3 public functions:
     endGame();
 
     withdrawWinnings(uint[] gameIds);
+
+
+There are several public attributes:
+
+    address public owner; // The address of the owner of the contract. The only one who can call withdrawOwner();
+    uint public ownerCut; // The % cut of each pot the owner takes.
+    uint public ownerValue; // The total value in the contract allocated to the owner.
+    uint public currentGameId; // The current gameId. This starts with 0 and iterates by 1 each time endGame() is called.
+    uint public betAmount; // The amount a voter needs to send to call the vote() function.
+    uint8 public blockLength; // The amount of blocks the game will last.
+    mapping(address => mapping(uint => Bet[])) public playerBets; // All the bets that have not yet been withdrawn with withdrawWinnings().
+    Game[] public gameHistory; // A list that contains the ending state of all games that have ever been played indexed by their gameId.
+    Game public game; // The current state of the game
 
 
 ### vote(enum Team, enum Vote) payable;
