@@ -109,7 +109,7 @@ The enums are defined as:
 
 Note that Team.NONE and Vote.NULL are for internal data initialization only, and should not be used as parameters. The function call will fail if you send either of those values.
 
-The value of eth that should be sent along with your vote() is defined by the public attribute in the contract called "betAmount";
+The value of eth that should be sent along with your vote() is defined by the public attribute in the contract called "betAmount". Sending ANY OTHER amount of ETH will cause this to fail. betAmount is measured in WEI.
 
 ### endGame();
 
