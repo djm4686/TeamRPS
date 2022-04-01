@@ -65,7 +65,7 @@ contract TeamrpsTest is DSTest {
           }
           hevm.roll(blockLength);
           teamrps.endGame();
-          teamrps.withdraw(gameIds);
+          teamrps.withdrawWinnings(gameIds);
           uint cut = teamrps.calculateCut(betAmount * test_count);
           uint postBalance = address(this).balance;
           assertEq(prebalance - postBalance, cut);
@@ -89,7 +89,7 @@ contract TeamrpsTest is DSTest {
 
         hevm.roll(blockLength);
         teamrps.endGame();
-        teamrps.withdraw(gameIds);
+        teamrps.withdrawWinnings(gameIds);
         uint cut = teamrps.calculateCut(betAmount * 6);
         uint postBalance = address(this).balance;
         assertEq(prebalance, postBalance + cut);
@@ -112,7 +112,7 @@ contract TeamrpsTest is DSTest {
 
         hevm.roll(blockLength);
         teamrps.endGame();
-        teamrps.withdraw(gameIds);
+        teamrps.withdrawWinnings(gameIds);
         uint cut = teamrps.calculateCut(betAmount * 6);
         uint postBalance = address(this).balance;
         assertEq(prebalance, postBalance + cut);
@@ -132,7 +132,7 @@ contract TeamrpsTest is DSTest {
 
         hevm.roll(blockLength);
         teamrps.endGame();
-        teamrps.withdraw(gameIds);
+        teamrps.withdrawWinnings(gameIds);
 
         uint cut = teamrps.calculateCut(betAmount * 2);
         pot = betAmount * 2 - cut;
@@ -148,7 +148,7 @@ contract TeamrpsTest is DSTest {
         gameId = teamrps.currentGameId();
         gameIds.push(gameId);
         teamrps.endGame();
-        teamrps.withdraw(gameIds);
+        teamrps.withdrawWinnings(gameIds);
 
         cut += teamrps.calculateCut(pot);
         postBalance = address(this).balance;
@@ -167,12 +167,12 @@ contract TeamrpsTest is DSTest {
       }
       hevm.roll(blockLength);
       teamrps.endGame();
-      teamrps.withdraw(gameIds);
+      teamrps.withdrawWinnings(gameIds);
       uint cut = teamrps.calculateCut(betAmount * test_count);
       uint postBalance = address(this).balance;
       assertEq(prebalance - postBalance, cut);
 
-      teamrps.withdraw(gameIds);
+      teamrps.withdrawWinnings(gameIds);
       postBalance = address(this).balance;
       assertEq(prebalance - postBalance, cut);
     }
