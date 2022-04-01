@@ -24,25 +24,25 @@ A winner is determined once the game becomes inactive. The votes for each gestur
 
 Example:
 
-Red Team:
+    Red Team:
 
-  Votes:
+      Votes:
 
-    Rock: 6
+        Rock: 6
 
-    Paper: 12
+        Paper: 12
 
-    Scissors: 11
+        Scissors: 11
 
-Blue Team:
+    Blue Team:
 
-  Votes:
+      Votes:
 
-    Rock:3
+        Rock:3
 
-    Paper:4
+        Paper:4
 
-    Scissors:11
+        Scissors:11
 
 In the above example the Red team's gesture is determined to be Paper, and the Blue team's gesture is Scissors. Following normal rules of RPS, the Blue team wins.
 
