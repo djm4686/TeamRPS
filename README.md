@@ -54,11 +54,17 @@ In the event of a tie, the pot is passed down to the next game. All votes are wi
 There are 7 public functions:
 
 vote(enum Team, enum Vote) payable;
+
 voteWithBalance(enum Team, enum Vote);
+
 endGame();
+
 withdrawWinnings(uint[] gameIds);
+
 withdrawBalance();
+
 transferWinnings(uint[] gameIds);
+
 deposit(); payable
 
 vote() takes two enums, the team you want to vote for, and the vote itself.
