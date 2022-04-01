@@ -272,7 +272,7 @@ contract RPS {
     }
 
     function calculateCut(uint pot) public view returns (uint){
-        return pot * ownerCut / 100;
+        return pot * ownerCut / 10000;
     }
 
     function getPayout(uint gameId) internal view returns (uint payout) {

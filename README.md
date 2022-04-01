@@ -71,7 +71,7 @@ There are 3 public functions:
 There are 9 public attributes:
 
     address public owner; // The address of the owner of the contract. The only one who can call withdrawOwner();
-    uint public ownerCut; // The % cut of each pot the owner takes.
+    uint public ownerCut; // The cut of each pot the owner takes. The unit is 1/100th of a %.
     uint public ownerValue; // The total value in the contract allocated to the owner.
     uint public currentGameId; // The current gameId. This starts with 0 and iterates by 1 each time endGame() is called.
     uint public betAmount; // The amount a voter needs to send to call the vote() function.
