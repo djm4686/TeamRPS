@@ -79,7 +79,7 @@ The value of eth that should be sent along with your vote() is defined by the pu
 
 ### endGame();
 
-endGame() can only be called when the game is inactive. It pushes the current game onto the gameHistory array, then initializes a new game. If the last game was a tie, the game's initial pot will be the total pot of the last game. The start block is the block in which endGame() is called. All votes for all teams are wiped, and the new game becomes active.
+endGame() can only be called when the game is inactive. It pushes the current game onto the gameHistory array, then initializes a new game. If the last game was a tie, the game's initial pot will be the total pot of the last game. The startBlock of the new game is the block in which endGame() is called. All votes for all teams are wiped, and the new game becomes active.
 
 ### withdrawWinnings(uint[] gameIds);
 
