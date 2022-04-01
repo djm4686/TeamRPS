@@ -95,6 +95,29 @@ contract TeamrpsTest is DSTest {
         assertEq(prebalance, postBalance + cut);
       }
     }
+    function test_vote_then_withdraw_multiplayer_success_two() public {
+      payable(address(teamrps)).transfer(100 ether);
+      for(uint i=0; i < betAmounts.length; i++){
+        hevm.roll(0);
+        betAmount = betAmounts[i];
+        teamrps = new RPS(betAmount, blockLength, 1);
+        uint prebalance = address(this).balance;
+
+        teamrps.vote{value: betAmount}(teamrps.getTeamEnum("BLUE"), teamrps.getVoteEnum("ROCK"));
+        teamrps.vote{value: betAmount}(teamrps.getTeamEnum("BLUE"), teamrps.getVoteEnum("ROCK"));
+        teamrps.vote{value: betAmount}(teamrps.getTeamEnum("BLUE"), teamrps.getVoteEnum("ROCK"));
+        teamrps.vote{value: betAmount}(teamrps.getTeamEnum("RED"), teamrps.getVoteEnum("SCISSORS"));
+        teamrps.vote{value: betAmount}(teamrps.getTeamEnum("RED"), teamrps.getVoteEnum("SCISSORS"));
+        teamrps.vote{value: betAmount}(teamrps.getTeamEnum("RED"), teamrps.getVoteEnum("SCISSORS"));
+
+        hevm.roll(blockLength);
+        teamrps.endGame();
+        teamrps.withdraw(gameIds);
+        uint cut = teamrps.calculateCut(betAmount * 6);
+        uint postBalance = address(this).balance;
+        assertEq(prebalance, postBalance + cut);
+      }
+    }
 
     function test_vote_then_withdraw_tie_success() public {
       for(uint i=0; i < betAmounts.length; i++){
