@@ -5,10 +5,7 @@ An ethereum smart contract for a blockchain-based gambling game built with solid
 
 For those of you that live under a rock, a normal rock-paper-scissors game is played between two players. The game begins when both players simultaneously hold out their hands and say the words "rock, paper, scissors, shoot!" When the word "shoot" is said, each player forms their hand into one of three gestures, each one signifying either rock, paper, or scissors respectively. The winner of the game is the person who gestured with the "better" of the two displayed gestures. Paper beats rock, rock beats scissors, and scissors beats paper. If both players display the same gesture, the game is a tie.
 
-Team RPS takes this into another level. The first game begins when the contract is published. It is published with three parameters: The bet amount, the number of blocks each game will last, as well as the cut the owner of the contract takes from each pot.
-
-The bet amount is immutable and is considered the cost of participating in a game.
-The number of blocks is better explained with an example. Assume the number of blocks set is 5. Also assume that the current game of TeamRPS was initialized in block 20. This means that at block 26, the game is considered over and players can no longer participate in this game. Payouts from that game can be requested via the withdraw() function. A new game can be started in block >=26 by calling the endGame() function. This causes the start block to become the block in which endGame() was called.
+Team RPS takes this classic game and puts it on the blockchain.
 
 ## How to play the game:
 
