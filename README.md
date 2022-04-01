@@ -93,4 +93,4 @@ withdrawWinnings() takes in a list of gameIds, limited to a total of 100 Ids to 
 
 The calculations to determine who won a game and who gets the payout is actually done every time withdrawWinnings() is called.
 
-Note: due to math in solidity not having floating points, the above calculation is rounded down. So you may receive 1 WEI less than you should have. 1 WEI is 1 attoether, or 0.000000000000000001 ETH. At current prices that's worth .0000000000000032052 USD so nobody should really be complaining too much.
+Note: Due to math in solidity not having floating points, the above calculation is rounded down. So you may receive 1 WEI less than you should have. 1 WEI is 1 attoether, or 0.000000000000000001 ETH. At current prices that's worth .0000000000000032052 USD so nobody should really be complaining too much.
