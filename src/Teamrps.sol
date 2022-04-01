@@ -39,7 +39,6 @@ contract RPS {
     address public owner;
     uint public ownerCut;
     uint public ownerValue;
-    uint public currentPot;
     uint public currentGameId;
     uint public betAmount;
     uint8 public blockLength; //Blocks
@@ -64,12 +63,6 @@ contract RPS {
         Vote lastBlueVote;
     }
 
-    struct playerBalance {
-        uint balance;
-        uint lastDepositBlock;
-    }
-
-    mapping(address => playerBalance) public playerBalances;
     mapping(address => mapping(uint => Bet[])) public playerBets;
     Game[] public gameHistory;
     Game public game;
@@ -80,7 +73,6 @@ contract RPS {
         blockLength = numBlocks;
         ownerCut = cut;
         currentGameId = 0;
-        currentPot = 0;
         createNewGame(0);
     }
 
@@ -136,7 +128,7 @@ contract RPS {
              uint2str(game.startBlock), " --- Game Length: ",
              uint2str(blockLength))));
         require(playerBets[msg.sender][currentGameId].length < 100,
-           "You have made too many votes this game.")
+           "You have made too many votes this game.");
         game.pot += betAmount;
         if(team == Team.RED){
             game.redPlayerCount += 1;
