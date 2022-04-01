@@ -124,7 +124,7 @@ withdrawWinnings() takes in a list of gameIds, limited to a total of 100 Ids to 
 
     t = total payout
 
-    t = (p / w) *
+    t = (p / w) * b
 
 The calculations to determine who won a game and who gets the payout is actually done every time withdrawWinnings() is called.
 
