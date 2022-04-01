@@ -60,7 +60,7 @@ Ties:
 
 In the event of a tie, the pot is passed down to the next game. All votes are wiped, and players must vote() again.
 
-There are 7 public functions:
+There are 4 public functions:
 
     vote(enum Team, enum Vote) payable;
 
@@ -70,11 +70,6 @@ There are 7 public functions:
 
     withdrawWinnings(uint[] gameIds);
 
-    withdrawBalance();
-
-    transferWinnings(uint[] gameIds);
-
-    deposit(); payable
 
 vote() takes two enums, the team you want to vote for, and the vote itself.
 The enums are defined as:
@@ -83,11 +78,9 @@ enum Team { RED, BLUE, NONE }
 
 enum Vote { ROCK, PAPER, SCISSORS, NULL }
 
-Note that Team.NONE and Vote.NULL are for internal data initialization only, and should not be used as parameters. The function call will fail if you send either of those values, losing the eth that you sent in the process.
+Note that Team.NONE and Vote.NULL are for internal data initialization only, and should not be used as parameters. The function call will fail if you send either of those values.
 
 The value of eth that should be sent along with your vote() is defined by the public attribute in the contract called "betAmount";
-
-voteWithBalance() works the same way as vote(), but it is not payable. Instead, it uses whatever balance you have deposited within the contract.
 
 endGame() can only be called when the game is inactive. It pushes the current game onto the gameHistory array, then initializes a new game. If the last game was a tie, the game's initial pot will be the total pot of the last game. The start block is the block in which endGame() is called. All votes for all teams are wiped, and the new game becomes active.
 
@@ -102,11 +95,3 @@ withdrawWinnings() takes in a list of gameIds, limited to a total of 100 Ids to 
   t = total payout
 
   t = (p / w) *
-
-withdrawBalance() pays out the entire balance you have in the playerBalances attribute based on your wallet address.
-
-transferWinnings() works the same way as withdrawWinnnings(), except it pays out to your playerBalance.
-
-deposit() takes an arbitrary payment transferred to it, and deposits it into your playerBalance.
-
-Note: any amount deposited via deposit() or transferWinnings() will be held for a small number of blocks to ensure it is not double-spent.
