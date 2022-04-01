@@ -1,7 +1,7 @@
 # TeamRPS
 A smart contract for a gambling game: team-based rock paper scissors
 
-How it works:
+## How it works:
 
 For those of you that live under a rock, a normal rock-paper-scissors game is played between two players. The game begins when both players simultaneously hold out their hands and say the words "rock, paper, scissors, shoot!" When the word "shoot" is said, each player forms their hand into one of three gestures, each one signifying either rock, paper, or scissors respectively. The winner of the game is the person who gestured with the "better" of the two displayed gestures. Paper beats rock, rock beats scissors, and scissors beats paper. If both players display the same gesture, the game is a tie.
 
@@ -10,7 +10,7 @@ Team RPS takes this into another level. The first game begins when the contract 
 The bet amount is immutable and is considered the cost of participating in a game.
 The number of blocks is better explained with an example. Assume the number of blocks set is 5. Also assume that the current game of TeamRPS was initialized in block 20. This means that at block 26, the game is considered over and players can no longer participate in this game. Payouts from that game can be requested via the withdraw() function. A new game can be started in block >=26 by calling the endGame() function. This causes the start block to become the block in which endGame() was called.
 
-Now, for how to play the game:
+## How to play the game:
 
 The game has two states: active and inactive.
 Active: The current block is less than the start block plus the number of blocks specified during creation
@@ -38,7 +38,7 @@ Example:
 
 In the above example the Red team's gesture is determined to be Paper, and the Blue team's gesture is Scissors. Following normal rules of RPS, the Blue team wins.
 
-Payout:
+## Payout
 
 Lets assume that the betAmount for the above game was 1 ETH. Lets tally up the total amount of votes there were:
 
@@ -48,9 +48,11 @@ Each vote MUST have paid the betAmount to have their vote considered, so the tot
 
 To be paid out, the player calls the withdrawWinnings() function, passing in all of the gameIds of the games they wish to withdrawWinnings from. The first gameId is 0, and 1 is added each time endGame() is called. Therefore, looping through the range of numbers between (0, currentGameId) will yield every game. This list is public, so you can see which gameIds you are owed money for without sending a transaction. The withdraw function is limited to 100 gameIds, to prevent an out-of-gas situation.
 
-Ties:
+## Ties
 
 In the event of a tie, the pot is passed down to the next game. All votes are wiped, and players must vote() again.
+
+## Nerdy details
 
 There are 4 public functions:
 
