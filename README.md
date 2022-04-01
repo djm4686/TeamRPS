@@ -16,7 +16,7 @@ The game has two states: active and inactive.
 
     Active: The current block is less than or equal to the start block plus the number of blocks specified during creation
       e.g. a game started on block 20 with a game length of 10 blocks would be active during blocks 20-30.
-    Inactive: The current block is greater than or equal to the start block plus the number of blocks specified during creation
+    Inactive: The current block is greater than the start block plus the number of blocks specified during creation
       e.g. a game started on block 20 with a game length of 10 blocks would be inactive on any blocks other than 20-30.
 
 While the game is active players may vote() for a team and either rock, paper, or scissors. Players can vote() multiple times, each time paying the betAmount specified in the contract. Players may vote for any combination of teams and gestures. Votes are publicly viewable, but are immutable and cannot be changed.
