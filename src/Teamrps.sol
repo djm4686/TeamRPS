@@ -337,7 +337,9 @@ contract RPS {
         for(uint j=0; j < gameIds.length; j++){
             require(gameIds[j] >= 0 && gameIds[j] < currentGameId,
                string(abi.encodePacked("gameId provided is out of range: ",
-                uint2str(currentGameId), " -- Please provide a valid gameId.")));
+                uint2str(currentGameId),
+                " -- Please provide a valid gameId between 0 and ",
+                uint2str(currentGameId))));
             Bet[] memory bets = playerBets[msg.sender][gameIds[j]];
             Winner winner = determineWinner(gameIds[j]);
             if(bets.length > 0){
