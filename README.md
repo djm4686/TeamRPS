@@ -5,7 +5,7 @@ An ethereum smart contract for a blockchain-based gambling game built with solid
 
 For those of you that live under a rock, a normal rock-paper-scissors game is played between two players. The game begins when both players simultaneously hold out their hands and say the words "rock, paper, scissors, shoot!" When the word "shoot" is said, each player forms their hand into one of three gestures, each one signifying either rock, paper, or scissors respectively. The winner of the game is the person who gestured with the "better" of the two displayed gestures. Paper beats rock, rock beats scissors, and scissors beats paper. If both players display the same gesture, the game is a tie.
 
-Team RPS takes this classic game and puts it on the blockchain, and instead of there being only two players, there are two teams made up of a potentially limitless amount of players. Players vote on what each team should gesture. Once a certain number of blocks are mined, the winning team is finalized.
+Team RPS takes this classic game and puts it on the blockchain, and instead of there being only two players, there are two teams made up of a potentially limitless amount of players. Players vote on what each team should gesture. Once a certain number of blocks are mined, the votes are finalized. Those votes determine which gesture each team produces, which then in turns determines which team won the game.
 
 ## How to play the game:
 
