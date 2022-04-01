@@ -68,7 +68,7 @@ There are 3 public functions:
     withdrawWinnings(uint[] gameIds);
 
 
-There are several public attributes:
+There are 9 public attributes:
 
     address public owner; // The address of the owner of the contract. The only one who can call withdrawOwner();
     uint public ownerCut; // The % cut of each pot the owner takes.
@@ -79,6 +79,23 @@ There are several public attributes:
     mapping(address => mapping(uint => Bet[])) public playerBets; // All the bets that have not yet been withdrawn with withdrawWinnings().
     Game[] public gameHistory; // A list that contains the ending state of all games that have ever been played indexed by their gameId.
     Game public game; // The current state of the game
+
+The Game struct contains 12 members
+
+    struct Game {
+        uint pot; // The total pot of the game
+        uint redPlayerCount; // The total number of bets for the Red team.
+        uint bluePlayerCount; // The total number of bets for the Blue team.
+        uint redRockVotes; // The total number of Red team Votes that were Rock.
+        uint redPaperVotes; // The total number of Red team Votes that were Paper.
+        uint redScissorsVotes; // The total number of Red team Votes that were Scissors.
+        uint blueRockVotes; // The total number of Blue team Votes that were Rock.
+        uint bluePaperVotes; // The total number of Blue team Votes that were Paper.
+        uint blueScissorsVotes; // The total number of Blue team Votes that were Scissors.
+        uint startBlock; // The block denoting the beginning of the Game's active period.
+        Vote lastRedVote; // The last Vote a member of the Red team made.
+        Vote lastBlueVote; // The last Vote a member of the Blue team made.
+    }
 
 
 ### vote(enum Team, enum Vote) payable;
