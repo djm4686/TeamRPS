@@ -39,17 +39,19 @@ Example:
         Paper:4
         Scissors:11
 
-In the above example the Red team's gesture is determined to be Paper, and the Blue team's gesture is Scissors. Following normal rules of RPS, the Blue team wins.
+In the above example the Red team's gesture is determined to be Paper, and the Blue team's gesture is Scissors. Following normal rules of normal RPS, the Blue team wins.
 
 ## Payout
 
-Lets assume that the betAmount for the above game was 1 ETH. Lets tally up the total amount of votes there were:
+Lets assume that the betAmount for the above game was 1 ETH. Lets sum the total amount of votes there were:
 
   6+12+11+3+4+11 = 47
 
-Each vote MUST have paid EXACTLY the betAmount to have their vote considered, so the total pot was 47 ETH. The winners were the blue team, which had 18 votes. Splitting 47 ETH evenly would payout over 2.75 ETH to each player. In reality, the payout might be slightly less, as the owner of the contract may take a small cut from the overall pot.
+Each vote MUST have paid EXACTLY the betAmount to have their vote considered, so the total pot was 47 ETH. The winners were the blue team, which had 18 votes. Splitting 47 ETH evenly would pay out over 2.75 ETH to each player. In reality, the payout might be slightly less, as the owner of the contract may take a small cut from the overall pot.
 
 To be paid out, the player calls the withdrawWinnings() function, passing in all of the gameIds of the games they wish to withdrawWinnings from. The first gameId is 0, and 1 is added each time endGame() is called. Therefore, looping through the range of numbers between (0, currentGameId) will yield every game. This list is public, so you can see which gameIds you are owed money for without sending a transaction. The withdraw function is limited to 100 gameIds, to prevent an out-of-gas situation.
+
+Note: Before calling withdrawWinnings() with a particular gameId, that game must have been ended with endGame().
 
 ## Ties
 
