@@ -85,15 +85,15 @@ endGame() can only be called when the game is inactive. It pushes the current ga
 
 withdrawWinnings() takes in a list of gameIds, limited to a total of 100 Ids to help prevent out-of-gas issues. This loops through the history of all of the games supplied in the parameter, and tallies up the winnings of any game for which you bet on the winning team. It then transfer the entire amount tallied over all games to your wallet. The payout of each game works as follows:
 
-  p = total pot in the game minus any owner cuts
+    p = total pot in the game minus any owner cuts
 
-  w = total amount of bets for the winning team
+    w = total amount of bets for the winning team
 
-  b = total amount of bets YOU made for the winning team
+    b = total amount of bets YOU made for the winning team
 
-  t = total payout
+    t = total payout
 
-  t = (p / w) *
+    t = (p / w) *
 
 The calculations to determine who won a game and who gets the payout is actually done every time withdrawWinnings() is called.
 
