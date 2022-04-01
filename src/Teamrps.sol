@@ -85,6 +85,7 @@ contract RPS {
     }
 
     // An internal function used to create a new game state
+    // potLeftover should be 0 unless the last game was a tie.
     function createNewGame(uint potLeftover) internal {
         game = Game({
             pot: potLeftover,
@@ -128,18 +129,23 @@ contract RPS {
     // The function to vote for a particular team and gesture.
     // The amount sent MUST be EQUAL to the betAmount attribute
     function vote(Team team, Vote v) public payable {
+        // Require the bet amount to be right.
         require(msg.value == betAmount, string(abi.encodePacked("Wrong bet amount. The bet amount must be: ",
          uint2str(betAmount), " WEI. You provided: ",
           uint2str(msg.value), " WEI.")));
+        // Require that the team is valid
         require(team == Team.RED || team == Team.BLUE,
            "Bad team assignment. Please choose either the Red or Blue team.");
+        // Require that the vote is valid
         require(v == Vote.ROCK || v == Vote.PAPER || v == Vote.SCISSORS,
            "Bad vote. Please vote for Rock, Paper, or Scissors.");
+        // Require that the game is active.
         require(block.number <= game.startBlock + blockLength,
            string(abi.encodePacked("Game inactive. Current block: ",
              uint2str(block.number), " --- Starting block: ",
              uint2str(game.startBlock), " --- Game Length: ",
              uint2str(blockLength))));
+        // Require the player hasnt voted too many times this game.
         require(playerBets[msg.sender][currentGameId].length < 100,
            "You have made too many votes this game.");
         game.pot += betAmount;
@@ -174,8 +180,10 @@ contract RPS {
             }
         }
         else{
+          // Bad state. Shouldnt get here but its good to revert if it does.
           revert();
         }
+        // Add the bet so we can reference it later in withrawWinnings()
         playerBets[msg.sender][currentGameId].push(Bet({
             vote: v,
             team: team
@@ -190,7 +198,8 @@ contract RPS {
         uint redWinnerCount = 0;
         Vote blueWinner = Vote.NULL;
         uint blueWinnerCount = 0;
-
+        // Check which vote is highest.
+        // The last vote made breaks ties.
         if(g.redPaperVotes > redWinnerCount || (g.redPaperVotes >= redWinnerCount && g.lastRedVote == Vote.PAPER)){
             redWinner = Vote.PAPER;
             redWinnerCount = g.redPaperVotes;
@@ -215,15 +224,18 @@ contract RPS {
             blueWinner = Vote.SCISSORS;
             blueWinnerCount = g.blueScissorsVotes;
         }
+        // Checks for if nobody voted on one team
         if(redWinnerCount == 0 && blueWinnerCount > 0){
             return Winner.BLUEPAPER;
         }
         else if(redWinnerCount > 0 && blueWinnerCount == 0){
             return Winner.REDPAPER;
         }
+        // Check for tie
         if(blueWinner == redWinner){
             return Winner.TIE;
         }
+        // Return the proper winner otherwise
         if(blueWinner == Vote.ROCK){
             if(redWinner == Vote.PAPER){
                 return Winner.REDPAPER;
@@ -248,6 +260,7 @@ contract RPS {
                 return Winner.BLUESCISSORS;
             }
         }
+        // Bad state. Shouldnt ever get here, but if it does its good to revert.
         revert();
     }
 
@@ -267,19 +280,24 @@ contract RPS {
                 return true;
             }
         }
-        return false;
+        // Bad state. Shouldnt ever get here, but if it does its good to revert.
+        revert();
     }
 
     // This function must be called when the game is over to start a new game.
     // It calculates the owner's cut, pushes the current game state to the gameHistory,
     // And creates a new game state.
     function endGame() public {
+        // Ensure the game is inactive
         require(game.startBlock + blockLength <= block.number);
+        // Calculate owner cut
         uint cut = calculateCut(game.pot);
         game.pot -= cut;
         ownerValue += cut;
+        // Push the game history
         gameHistory.push(game);
         Winner winner = determineWinner(currentGameId);
+        // If the game is a tie, pass down the current pot to the new game.
         if(winner == Winner.TIE){
             createNewGame(game.pot);
         }
