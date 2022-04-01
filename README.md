@@ -1,5 +1,5 @@
 # TeamRPS
-An ethereum smart contract for a blockchain-based gambling game: team-based rock paper scissors
+An ethereum smart contract for a blockchain-based gambling game built with solidity: team-based rock paper scissors
 
 ## How it works:
 
